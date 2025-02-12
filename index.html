@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浪漫爱心</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            width: 800px;
+            height: 800px;
+            z-index: 1;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-origin: center center;
+        }
+
+        .small-heart {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(233, 87, 171, 0.8);
+            left: 50%;
+            top: 50%;
+            animation: heartbeat infinite;
+            will-change: transform, opacity;
+            transform-origin: center center;
+        }
+
+        .small-heart:before,
+        .small-heart:after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(233, 87, 171, 0.8);
+            border-radius: 50%;
+        }
+
+        .small-heart:before {
+            left: -4px;
+        }
+
+        .small-heart:after {
+            top: -4px;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: translate(calc(var(--x) * 0.8), calc(var(--y) * 0.8)) rotate(45deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: translate(var(--x), var(--y)) rotate(45deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(var(--x), var(--y)) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e957ab;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(233, 87, 171, 0.5);
+        }
+
+        .love-text {
+            position: absolute;
+            color: rgba(233, 87, 171, 0.6);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .background-text {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-love {
+            position: absolute;
+            color: rgba(233, 87, 171, 0.2);
+            font-size: 12px;
+            white-space: nowrap;
+            animation: fadeInOut 4s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .falling-heart {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .falling-heart:before,
+        .falling-heart:after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 0, 0, 0.6);
+            border-radius: 50%;
+        }
+
+        .falling-heart:before {
+            left: -5px;
+        }
+
+        .falling-heart:after {
+            top: -5px;
+        }
+
+        .poem-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .poem-line {
+            font-size: 18px;
+            color: rgba(233, 87, 171, 0);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(233, 87, 171, 0.5);
+            transition: color 2s ease-in-out;
+            font-family: "楷体", KaiTi, serif;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+        }
+
+        .poem-line.show {
+            color: rgba(233, 87, 171, 0.8);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .heart-container.hide {
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            pointer-events: none;
+        }
+
+        .reset-button {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: rgba(233, 87, 171, 0.8);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 4;
+        }
+
+        .reset-button:hover {
+            background: rgba(233, 87, 171, 1);
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .reset-button.show {
+            opacity: 1;
+        }
+
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(233, 87, 171, 0.8);
+        }
+
+        .music-button {
+            background: none;
+            border: none;
+            color: rgba(233, 87, 171, 0.8);
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .music-button:hover {
+            transform: scale(1.1);
+            color: rgba(233, 87, 171, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="fireworks"></canvas>
+    <div class="music-control">
+        <button class="music-button" id="musicToggle">♪</button>
+        <span id="musicStatus">音乐：关</span>
+    </div>
+    <div class="background-text" id="backgroundText"></div>
+    <div class="poem-container" id="poemContainer"></div>
+    <button class="reset-button" id="resetButton">重新开始</button>
+    <div class="container">
+        <div class="heart-container" id="heartContainer">
+            <div class="center-text">点击为你跳动的心</div>
+        </div>
+    </div>
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    <!-- <script src="script.js"></script> -->
+</body>
+<script>
+    class HeartShape {
+        constructor(container) {
+            this.container = container;
+            this.hearts = [];
+            this.centerX = container.offsetWidth / 2;
+            this.centerY = container.offsetHeight / 2;
+            this.radius = Math.min(this.centerX, this.centerY) * 0.7;
+            this.numHearts = 520; // 控制大爱心轮廓的小爱心数量
+            this.createHearts();
+            this.createBackgroundText();
+        }
+
+        // 创建心形轮廓坐标
+        getHeartPosition(angle) {
+            const t = angle * Math.PI / 180;
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+            return {
+                x: x * this.radius / 16,
+                y: -y * this.radius / 16
+            };
+        }
+
+        // 创建所有小爱心
+        createHearts() {
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < this.numHearts; i++) {
+                const angle = (360 / this.numHearts) * i;
+                const pos = this.getHeartPosition(angle);
+                const heart = document.createElement('div');
+                heart.className = 'small-heart';
+
+                // 设置CSS变量来控制位置
+                heart.style.setProperty('--x', `${pos.x}px`);
+                heart.style.setProperty('--y', `${pos.y}px`);
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                heart.style.animationDuration = '1.5s'; // 固定动画时长以使效果更统一
+
+                fragment.appendChild(heart);
+            }
+
+            this.container.appendChild(fragment);
+        }
+
+        // 创建背景love文字
+        createBackgroundText() {
+            const bgContainer = document.getElementById('backgroundText');
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < 50; i++) {
+                const text = document.createElement('div');
+                text.className = 'bg-love';
+                text.textContent = 'love';
+                text.style.left = `${Math.random() * 100}%`;
+                text.style.top = `${Math.random() * 100}%`;
+                text.style.animationDelay = `${Math.random() * 4}s`;
+                fragment.appendChild(text);
+            }
+
+            bgContainer.appendChild(fragment);
+        }
+    }
+
+    class Particle {
+        constructor(x, y, color, velocity, size, decay = 0.96) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.vx = velocity.x;
+            this.vy = velocity.y;
+            this.alpha = 1;
+            this.size = size;
+            this.decay = decay;
+            this.gravity = 0.12;
+            this.drag = 0.98;
+        }
+
+        update() {
+            this.vx *= this.drag;
+            this.vy *= this.drag;
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.alpha *= this.decay;
+            return this.alpha > 0.05;
+        }
+    }
+
+    class Firework {
+        constructor(canvas, x, y) {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            this.x = x;
+            this.y = y;
+            this.particles = [];
+            this.trails = [];
+            this.colors = [
+                [255, 87, 51],    // 红色
+                [255, 196, 0],    // 金色
+                [87, 171, 255],   // 蓝色
+                [171, 255, 87],   // 绿色
+                [255, 140, 0],    // 橙色
+                [147, 112, 219],  // 紫色
+                [64, 224, 208]    // 青色
+            ];
+            this.createExplosion();
+        }
+
+        createExplosion() {
+            // 减少主爆炸的粒子数量
+            this.createLayer(80, 6, 3, this.colors[Math.floor(Math.random() * this.colors.length)]);
+
+            // 减少次级爆炸的数量和粒子
+            setTimeout(() => {
+                const subExplosions = Math.floor(Math.random() * 2) + 1; // 减少次级爆炸数量
+                for (let i = 0; i < subExplosions; i++) {
+                    const angle = (Math.PI * 2 * i) / subExplosions;
+                    const distance = 30 + Math.random() * 20;
+                    const subX = this.x + Math.cos(angle) * distance;
+                    const subY = this.y + Math.sin(angle) * distance;
+                    this.createLayer(
+                        40, // 减少粒子数量
+                        4,
+                        2,
+                        this.colors[Math.floor(Math.random() * this.colors.length)],
+                        subX,
+                        subY,
+                        0.97
+                    );
+                }
+            }, 100);
+        }
+
+        createLayer(count, speed, size, color, x = this.x, y = this.y, decay = 0.96) {
+            for (let i = 0; i < count; i++) {
+                const angle = (i * Math.PI * 2) / count;
+                const variance = Math.random() * 0.3 + 0.8; // 减少随机性范围
+                const velocity = {
+                    x: Math.cos(angle) * speed * variance,
+                    y: Math.sin(angle) * speed * variance
+                };
+
+                // 减少颜色变化范围
+                const colorVariance = 20;
+                const particleColor = [
+                    color[0] + (Math.random() * colorVariance - colorVariance / 2),
+                    color[1] + (Math.random() * colorVariance - colorVariance / 2),
+                    color[2] + (Math.random() * colorVariance - colorVariance / 2)
+                ];
+
+                this.particles.push(new Particle(
+                    x, y,
+                    particleColor,
+                    velocity,
+                    size * (Math.random() * 0.3 + 0.8), // 减少大小变化范围
+                    decay
+                ));
+            }
+        }
+
+        update() {
+            // 减少拖尾效果的数量
+            if (Math.random() > 0.7) { // 只有30%的粒子产生拖尾
+                this.particles.forEach(p => {
+                    if (p.alpha > 0.3) { // 只有较亮的粒子产生拖尾
+                        this.trails.push({
+                            x: p.x,
+                            y: p.y,
+                            color: p.color,
+                            alpha: p.alpha * 0.4,
+                            size: p.size * 0.4
+                        });
+                    }
+                });
+            }
+
+            this.particles = this.particles.filter(p => p.update());
+
+            // 更快的拖尾消失速度
+            this.trails = this.trails.filter(trail => {
+                trail.alpha *= 0.9;
+                return trail.alpha > 0.05;
+            });
+
+            return this.particles.length > 0 || this.trails.length > 0;
+        }
+
+        draw(ctx = this.ctx) {
+            // 绘制拖尾
+            this.trails.forEach(trail => {
+                ctx.save();
+                ctx.globalAlpha = trail.alpha;
+                ctx.fillStyle = `rgba(${trail.color[0]}, ${trail.color[1]}, ${trail.color[2]}, ${trail.alpha})`;
+                ctx.beginPath();
+                ctx.arc(trail.x, trail.y, trail.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // 绘制粒子
+            this.particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+    }
+
+    class FireworkController {
+        constructor() {
+            this.canvas = document.getElementById('fireworks');
+            this.ctx = this.canvas.getContext('2d', {
+                alpha: false,
+                willReadFrequently: false
+            });
+            this.fireworks = [];
+            this.lastAutoFirework = 0;
+            this.autoFireworkInterval = 1200;
+            this.maxFireworks = 6;
+            this.lastPositions = [];
+
+            this.resizeCanvas();
+            this.bindEvents();
+            this.animate();
+        }
+
+        resizeCanvas() {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+        }
+
+        bindEvents() {
+            window.addEventListener('resize', () => this.resizeCanvas());
+            document.addEventListener('click', (e) => {
+                this.createFirework(e.clientX, e.clientY);
+            });
+        }
+
+        isPositionTooClose(x, y) {
+            // 检查新位置是否离现有烟花太近
+            return this.lastPositions.some(pos => {
+                const distance = Math.hypot(x - pos.x, y - pos.y);
+                return distance < 200; // 最小间距
+            });
+        }
+
+        updateLastPositions(x, y) {
+            this.lastPositions.push({ x, y });
+            if (this.lastPositions.length > 5) { // 只保留最近的5个位置
+                this.lastPositions.shift();
+            }
+        }
+
+        createFirework(x, y) {
+            if (this.fireworks.length >= this.maxFireworks) return;
+
+            if (this.isPositionTooClose(x, y)) {
+                let attempts = 0;
+                let newX = x, newY = y;
+                while (attempts < 3 && this.isPositionTooClose(newX, newY)) {
+                    newX = x + (Math.random() - 0.5) * 300;
+                    newY = y + (Math.random() - 0.5) * 300;
+                    attempts++;
+                }
+                x = newX;
+                y = newY;
+            }
+
+            this.fireworks.push(new Firework(this.canvas, x, y));
+            this.updateLastPositions(x, y);
+        }
+
+        autoCreateFirework() {
+            const now = Date.now();
+            if (now - this.lastAutoFirework > this.autoFireworkInterval) {
+                // 找到一个适合的位置
+                let x, y;
+                let attempts = 0;
+                do {
+                    x = Math.random() * this.canvas.width;
+                    y = Math.random() * (this.canvas.height * 0.6);
+                    attempts++;
+                } while (attempts < 5 && this.isPositionTooClose(x, y));
+
+                if (attempts < 5) {  // 如果找到合适位置
+                    this.createFirework(x, y);
+                    this.lastAutoFirework = now;
+                    this.autoFireworkInterval = 1200 + Math.random() * 1000;
+                }
+            }
+        }
+
+        animate() {
+            if (!this.offscreenCanvas) {
+                this.offscreenCanvas = document.createElement('canvas');
+                this.offscreenCanvas.width = this.canvas.width;
+                this.offscreenCanvas.height = this.canvas.height;
+                this.offscreenCtx = this.offscreenCanvas.getContext('2d', {
+                    alpha: false
+                });
+            }
+
+            // 使用更深的黑色，减少残影
+            this.offscreenCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            this.offscreenCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            this.fireworks = this.fireworks.filter(firework => {
+                const isAlive = firework.update();
+                if (isAlive) {
+                    firework.draw(this.offscreenCtx);
+                }
+                return isAlive;
+            });
+
+            this.ctx.drawImage(this.offscreenCanvas, 0, 0);
+
+            // 使用节流控制自动烟花的创建
+            if (this.fireworks.length < this.maxFireworks) {
+                this.autoCreateFirework();
+            }
+
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    class FallingHeart {
+        constructor(x) {
+            this.x = x;
+            this.y = -300;  // 从屏幕顶部稍微上方开始
+            this.speed = 3 + Math.random() * 2;  // 增加下落速度
+            this.swing = Math.random() * 3;  // 摆动幅度
+            this.swingSpeed = 0.02 + Math.random() * 0.03;  // 增加摆动速度
+            this.angle = Math.random() * Math.PI * 2;  // 初始角度
+            this.element = document.createElement('div');
+            this.element.className = 'falling-heart';
+            this.element.style.willChange = 'transform';  // 优化性能
+            this.element.style.zIndex = '0';  // 确保在大爱心后面
+            document.body.appendChild(this.element);
+        }
+
+        update() {
+            this.y += this.speed;
+            this.angle += this.swingSpeed;
+            const swingX = Math.sin(this.angle) * this.swing;
+            this.element.style.transform = `translate3d(${this.x + swingX}px, ${this.y}px, 0) rotate(45deg)`;
+            return this.y < window.innerHeight + 20;  // 当心形超出屏幕底部时返回false
+        }
+
+        remove() {
+            this.element.remove();
+        }
+    }
+
+    class FallingHeartsController {
+        constructor() {
+            this.hearts = [];
+            this.lastCreated = 0;
+            this.createInterval = 300;
+            this.maxHearts = 20;
+            this.screenWidth = window.innerWidth;
+            this.bindEvents();
+            this.animate();
+        }
+
+        bindEvents() {
+            // 监听窗口大小变化
+            window.addEventListener('resize', () => {
+                this.screenWidth = window.innerWidth;
+            });
+        }
+
+        createHeart() {
+            const now = Date.now();
+            if (now - this.lastCreated > this.createInterval && this.hearts.length < this.maxHearts) {
+                // 在整个屏幕宽度范围内随机生成，留出边距
+                // const margin = 20;
+                const x =  Math.random() * (this.screenWidth);
+                console.log(x);
+                this.hearts.push(new FallingHeart(x));
+                this.lastCreated = now;
+                this.createInterval = 300 + Math.random() * 200;
+            }
+        }
+
+        animate() {
+            this.createHeart();
+            
+            this.hearts = this.hearts.filter(heart => {
+                const isAlive = heart.update();
+                if (!isAlive) {
+                    heart.remove();
+                }
+                return isAlive;
+            });
+
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    class PoemDisplay {
+        constructor() {
+            this.container = document.getElementById('poemContainer');
+            this.heartContainer = document.getElementById('heartContainer');
+            this.resetButton = document.getElementById('resetButton');
+            this.lines = [
+                "风很轻，想我耳畔有你的声音；",
+                "云也轻，愿我能给你没烦恼的心情;",
+                "思念很轻，盼你心底有我的身影；",
+                "时光也轻，望余生存你同行的光影；",
+                "魂牵梦萦，每一刻思绪都为你飘零；",
+                "朝思暮想，每一轮月圆都惹我动情；",
+                "似那繁星逐月明，",
+                "而我早已沦陷于你的眼睛；",
+                "当暮色漫过青石巷陌,",
+                "可否让我掌心的纹路,",
+                "与你的年轮重叠成藤；",
+                "愿余生都浸在你眼波的光影"
+            ];
+            this.isDisplaying = false;
+            this.bindEvents();
+        }
+
+        bindEvents() {
+            document.getElementById('heartContainer').addEventListener('click', () => {
+                if (!this.isDisplaying) {
+                    this.displayPoem();
+                    this.heartContainer.classList.add('hide');
+                }
+            });
+
+            this.resetButton.addEventListener('click', () => {
+                this.reset();
+            });
+        }
+
+        displayPoem() {
+            this.isDisplaying = true;
+            this.container.innerHTML = '';
+
+            this.lines.forEach((line, index) => {
+                const div = document.createElement('div');
+                div.className = 'poem-line';
+                div.textContent = line;
+                this.container.appendChild(div);
+
+                setTimeout(() => {
+                    div.classList.add('show');
+                }, index * 2000);
+            });
+
+            setTimeout(() => {
+                this.resetButton.classList.add('show');
+            }, (this.lines.length - 1) * 2000 + 1000);
+        }
+
+        reset() {
+            this.container.innerHTML = '';
+            this.resetButton.classList.remove('show');
+
+            this.heartContainer.classList.remove('hide');
+
+            this.isDisplaying = false;
+
+            const container = document.getElementById('heartContainer');
+            container.innerHTML = '<div class="center-text">点击为你跳动的心</div>';
+            new HeartShape(container);
+            new FireworkController();
+            new FallingHeartsController();
+        }
+    }
+
+    class MusicController {
+        constructor() {
+            this.audio = document.getElementById('bgMusic');
+            this.button = document.getElementById('musicToggle');
+            this.status = document.getElementById('musicStatus');
+            this.isPlaying = true;  // 默认为播放状态
+            this.bindEvents();
+            this.autoPlay();
+        }
+
+        bindEvents() {
+            this.button.addEventListener('click', () => this.toggleMusic());
+            
+            // 处理音频加载错误
+            this.audio.addEventListener('error', () => {
+                console.log('音频加载失败');
+                this.button.style.display = 'none';
+            });
+
+            // 监听音频加载完成事件
+            this.audio.addEventListener('canplaythrough', () => {
+                this.autoPlay();
+            });
+        }
+
+        autoPlay() {
+            // 尝试自动播放
+            this.audio.play().then(() => {
+                this.status.textContent = '音乐：开';
+            }).catch(e => {
+                console.log('自动播放失败:', e);
+                this.isPlaying = false;
+                this.status.textContent = '音乐：关';
+            });
+        }
+
+        toggleMusic() {
+            if (this.isPlaying) {
+                this.audio.pause();
+                this.status.textContent = '音乐：关';
+            } else {
+                this.audio.play().catch(e => console.log('播放失败:', e));
+                this.status.textContent = '音乐：开';
+            }
+            this.isPlaying = !this.isPlaying;
+        }
+    }
+
+    // 初始化
+    window.addEventListener('load', () => {
+        const container = document.getElementById('heartContainer');
+        new HeartShape(container);
+        new FireworkController();
+        new FallingHeartsController();
+        new PoemDisplay();
+        new MusicController();
+    }); 
+</script>
+
+</html>
