@@ -254,6 +254,22 @@
             transform: scale(1.1);
             color: rgba(233, 87, 171, 1);
         }
+
+        .signature {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            color: rgba(233, 87, 171, 0.6);
+            font-size: 14px;
+            font-family: "Times New Roman", serif;
+            z-index: 5;
+            text-shadow: 0 0 5px rgba(233, 87, 171, 0.3);
+            transition: color 0.3s ease;
+        }
+
+        .signature:hover {
+            color: rgba(233, 87, 171, 0.9);
+        }
     </style>
 </head>
 
@@ -263,6 +279,7 @@
         <button class="music-button" id="musicToggle">♪</button>
         <span id="musicStatus">音乐：关</span>
     </div>
+    <div class="signature">Made In Tracy.</div>
     <div class="background-text" id="backgroundText"></div>
     <div class="poem-container" id="poemContainer"></div>
     <button class="reset-button" id="resetButton">再看一次吗</button>
