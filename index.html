@@ -659,7 +659,6 @@
                 // 在整个屏幕宽度范围内随机生成，留出边距
                 // const margin = 20;
                 const x =  Math.random() * (this.screenWidth);
-                console.log(x);
                 this.hearts.push(new FallingHeart(x));
                 this.lastCreated = now;
                 this.createInterval = 300 + Math.random() * 200;
